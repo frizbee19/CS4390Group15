@@ -2,19 +2,26 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.*;
+import java.time.*;
 
 public class ServerHelper implements Runnable {
 
     BufferedReader inFromClient;
     DataOutputStream outToClient;
-
+    PrintWriter logWriter;
     Socket connectionSocket;
+    String name;
+    LocalDateTime startTime;
+    LocalDateTime endTime;
+    
 
     // constructor, takes a socket as a parameter from driver code
-    public ServerHelper(Socket connSocket) throws Exception {
+    public ServerHelper(Socket connSocket, PrintWriter logWriter) throws Exception {
         connectionSocket = connSocket;
+        this.logWriter = logWriter;
         inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream())); 
 
         outToClient = new DataOutputStream(connectionSocket.getOutputStream()); 
@@ -26,7 +33,9 @@ public class ServerHelper implements Runnable {
         String expr = "";
         // read the expression from the client
         try {
+            outToClient.writeBytes("Enter an expression (or enter nothing to quit): ");
             expr = inFromClient.readLine();
+            logWriter.println(LocalDateTime.now() + " " + name + ": " + expr);
             
         } 
         catch (Exception e) {
@@ -75,6 +84,7 @@ public class ServerHelper implements Runnable {
             result = nums.pop();
             try {
                 outToClient.writeBytes("The result is: " + result + "\r\n");
+                logWriter.println(LocalDateTime.now() + " " + name + ": " + result);
                 
             } 
             catch (Exception e) {
@@ -82,7 +92,9 @@ public class ServerHelper implements Runnable {
             }
             try {
                 //read from client again
+                outToClient.writeBytes("Enter an expression (or enter nothing to quit): ");
                 expr = inFromClient.readLine();
+                logWriter.println(LocalDateTime.now() + " " + name + ": " + expr);
                 
             } 
             catch (Exception e) {
@@ -128,7 +140,27 @@ public class ServerHelper implements Runnable {
         }
     }
 
+    public void promptUser() {
+        //logs the user's name and start time
+        try {
+            outToClient.writeBytes("Enter your name: ");
+            name = inFromClient.readLine();
+        } 
+        catch (IOException e) {
+            logWriter.println(e.getMessage());
+            name = "Anonymous";
+        }
+        startTime = LocalDateTime.now();
+        logWriter.println("Client " + name + " connected at " + startTime);
+    }
+
+    // run method, runs when thread is started. Calculates expression and sends result back to client
     public void run() {
+        promptUser();
         calc();
+        // log the time the client disconnected and duration of connection
+        endTime = LocalDateTime.now();
+        Duration length = Duration.between(startTime, endTime);
+        logWriter.println("Client " + name + " disconnected at " + endTime + " (" + length.getSeconds() + " seconds)");
     }
 }
