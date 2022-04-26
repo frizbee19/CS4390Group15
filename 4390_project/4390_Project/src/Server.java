@@ -1,5 +1,6 @@
 import java.net.*;
 import java.io.*;
+import java.util.*;
 
 public class Server {
 
@@ -14,6 +15,9 @@ public class Server {
         log.createNewFile();
         PrintWriter logWriter = new PrintWriter(log);
         logWriter.println("Server started");
+        //create arraylist of threads
+        ArrayList<Thread> threads = new ArrayList<Thread>();
+        Scanner in = new Scanner(System.in);
         //main loop
         while(true) { 
             //blocks program until a client connects successfully
@@ -22,13 +26,22 @@ public class Server {
             try {
                 //create a new thread for each client, run the calc method
                 ServerHelper helper = new ServerHelper(connectionSocket, logWriter);
-                new Thread(helper).start();
+                Thread t = new Thread(helper);
+                t.start();
+                threads.add(t);
             }
             catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
                 break;
             }
+            //close the server
+            if(in.nextLine().equals("quit")) {
+                break;
+            }
         }
+        logWriter.println("Server stopped");
+        logWriter.close();
+        in.close();
         welcomeSocket.close(); 
     } 
     
