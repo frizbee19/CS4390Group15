@@ -1,6 +1,7 @@
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import java.time.*;
 
 public class Server {
 
@@ -14,12 +15,16 @@ public class Server {
         File log = new File("log.txt");
         log.createNewFile();
         PrintWriter logWriter = new PrintWriter(log);
-        logWriter.println("Server started");
+        logWriter.println(LocalDateTime.now() + " Server started");
         //create arraylist of threads
         ArrayList<Thread> threads = new ArrayList<Thread>();
-        Scanner in = new Scanner(System.in);
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         //main loop
         while(true) { 
+            //close the server
+            if(in.readLine().equals("quit")) {
+                break;
+            }
             //blocks program until a client connects successfully
             Socket connectionSocket = welcomeSocket.accept(); 
 
@@ -34,12 +39,8 @@ public class Server {
                 System.out.println("Error: " + e.getMessage());
                 break;
             }
-            //close the server
-            if(in.nextLine().equals("quit")) {
-                break;
-            }
         }
-        logWriter.println("Server stopped");
+        logWriter.println(LocalDateTime.now() + " Server stopped");
         logWriter.close();
         in.close();
         welcomeSocket.close(); 
