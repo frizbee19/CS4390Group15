@@ -12,9 +12,8 @@ public class Server {
         //create server socket
         ServerSocket welcomeSocket = new ServerSocket(PORT); 
         //create log file, append if it exists
-        File log = new File("log.txt");
-        log.createNewFile();
-        PrintWriter logWriter = new PrintWriter(log);
+        FileWriter logFile = new FileWriter("log.txt", true);
+        PrintWriter logWriter = new PrintWriter(logFile);
         logWriter.println(LocalDateTime.now() + " Server started");
         //create arraylist of threads
         ArrayList<Thread> threads = new ArrayList<Thread>();

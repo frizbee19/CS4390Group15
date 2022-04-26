@@ -145,13 +145,14 @@ public class ServerHelper implements Runnable {
         try {
             outToClient.writeBytes("Enter your name: ");
             name = inFromClient.readLine();
+            outToClient.writeBytes(LocalDateTime.now() + " " + name + ": " + "connected");
         } 
         catch (IOException e) {
             logWriter.println(e.getMessage());
             name = "Anonymous";
         }
         startTime = LocalDateTime.now();
-        logWriter.println("Client " + name + " connected at " + startTime);
+        logWriter.println(startTime + " " + name + ": " + "connected");
     }
 
     // run method, runs when thread is started. Calculates expression and sends result back to client
