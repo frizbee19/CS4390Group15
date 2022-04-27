@@ -1,11 +1,10 @@
 import java.net.*;
 import java.io.*;
-import java.util.*;
 import java.time.*;
 
 public class Server {
 
-    private static final int PORT = 9876;
+    private static final int PORT = 2300;
 
     //main method
     public static void main(String[] args) throws Exception {
@@ -15,8 +14,6 @@ public class Server {
         FileWriter logFile = new FileWriter("log.txt", true);
         PrintWriter logWriter = new PrintWriter(logFile);
         logWriter.println(LocalDateTime.now() + " Server started");
-        //create arraylist of threads
-        ArrayList<Thread> threads = new ArrayList<Thread>();
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         //main loop
         while(true) { 
@@ -26,13 +23,13 @@ public class Server {
             }
             //blocks program until a client connects successfully
             Socket connectionSocket = welcomeSocket.accept(); 
+            logWriter.println(LocalDateTime.now() + " Client connected");
 
             try {
                 //create a new thread for each client, run the calc method
                 ServerHelper helper = new ServerHelper(connectionSocket, logWriter);
                 Thread t = new Thread(helper);
                 t.start();
-                threads.add(t);
             }
             catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
