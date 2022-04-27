@@ -31,20 +31,18 @@ public class ServerHelper implements Runnable {
     public void calc() {
         int result = 0;
         String expr = "";
+        System.out.println("calculating...");
         // read the expression from the client
         try {
-            outToClient.writeBytes("Enter an expression (or enter nothing to quit): ");
+            // outToClient.writeBytes("Enter an expression (or enter nothing to quit): ");
             expr = inFromClient.readLine();
             logWriter.println(LocalDateTime.now() + " " + name + ": " + expr);
             
         } 
         catch (Exception e) {
-            try {
-                outToClient.writeBytes("Error: " + e.getMessage() + "\n");
-            } 
-            catch (IOException e1) {
-                System.out.println("Error: " + e1.getMessage());
-            }
+            
+                System.out.println("Error: " + e.getMessage());
+            
         }
         // calculate the expression, repeat until client quits
         while(expr != null || expr != "" || expr != "quit") {
@@ -72,7 +70,7 @@ public class ServerHelper implements Runnable {
                     ops.push(tokens[i]);
                 }
                 //parse number and add to the stack
-                else {
+                else if (tokens[i].matches("[0-9]+")) {
                     nums.push(Integer.parseInt(tokens[i]));
                 }
             }
@@ -83,7 +81,7 @@ public class ServerHelper implements Runnable {
             //send result to client
             result = nums.pop();
             try {
-                outToClient.writeBytes("The result is: " + result + "\r\n");
+                outToClient.writeBytes("The result is: " + result + '\n');
                 logWriter.println(LocalDateTime.now() + " " + name + ": " + result);
                 
             } 
@@ -92,14 +90,14 @@ public class ServerHelper implements Runnable {
             }
             try {
                 //read from client again
-                outToClient.writeBytes("Enter an expression (or enter nothing to quit): ");
+                // outToClient.writeBytes("Enter an expression (or enter nothing to quit): ");
                 expr = inFromClient.readLine();
                 logWriter.println(LocalDateTime.now() + " " + name + ": " + expr);
                 
             } 
             catch (Exception e) {
                 try {
-                    outToClient.writeBytes("Error: " + e.getMessage() + "\n");
+                    outToClient.writeBytes("Error: " + e.getMessage() + '\n');
                 } 
                 catch (IOException e1) {
                     System.out.println("Error: " + e1.getMessage());
@@ -143,9 +141,9 @@ public class ServerHelper implements Runnable {
     public void promptUser() {
         //logs the user's name and start time
         try {
-            outToClient.writeBytes("Enter your name: ");
+            // outToClient.writeBytes("Enter your name: ");
             name = inFromClient.readLine();
-            outToClient.writeBytes(LocalDateTime.now() + " " + name + ": " + "connected");
+            // outToClient.writeBytes(LocalDateTime.now() + " " + name + ": " + "connected");
         } 
         catch (IOException e) {
             logWriter.println(e.getMessage());
@@ -157,6 +155,7 @@ public class ServerHelper implements Runnable {
 
     // run method, runs when thread is started. Calculates expression and sends result back to client
     public void run() {
+        System.out.println("Thread started lol");
         promptUser();
         calc();
         // log the time the client disconnected and duration of connection

@@ -1,10 +1,12 @@
 import java.net.*;
 import java.io.*;
 import java.time.*;
+import java.util.ArrayList;
 
 public class Server {
 
-    private static final int PORT = 2300;
+    private static final int PORT = 6789;
+   
 
     //main method
     public static void main(String[] args) throws Exception {
@@ -15,6 +17,8 @@ public class Server {
         PrintWriter logWriter = new PrintWriter(logFile);
         logWriter.println(LocalDateTime.now() + " Server started");
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        //arraylist of threads
+        ArrayList<Thread> threads = new ArrayList<Thread>();
         //main loop
         while(true) { 
             //close the server
@@ -24,17 +28,21 @@ public class Server {
             //blocks program until a client connects successfully
             Socket connectionSocket = welcomeSocket.accept(); 
             logWriter.println(LocalDateTime.now() + " Client connected");
+            System.out.println("Client connected");
 
-            try {
-                //create a new thread for each client, run the calc method
-                ServerHelper helper = new ServerHelper(connectionSocket, logWriter);
-                Thread t = new Thread(helper);
-                t.start();
-            }
-            catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
-                break;
-            }
+            // try {
+            //     //create a new thread for each client, run the calc method
+            //     ServerHelper helper = new ServerHelper(connectionSocket, logWriter);
+            //     Thread t = new Thread(helper);
+            //     threads.add(t);
+            //     t.start();
+            // }
+            // catch (Exception e) {
+            //     System.out.println("Error: " + e.getMessage());
+            //     break;
+            // }
+            ServerHelper helper = new ServerHelper(connectionSocket, logWriter);
+            helper.run();
         }
         logWriter.println(LocalDateTime.now() + " Server stopped");
         logWriter.close();
