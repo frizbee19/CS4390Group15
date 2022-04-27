@@ -6,8 +6,6 @@ class Client {
     public static void main(String[] args) throws UnknownHostException, IOException {
 	int port = 9876;
 	
-        ServerSocket start = new ServerSocket(port); 
-
 	Scanner sc = new Scanner(System.in);
 
 	try {
