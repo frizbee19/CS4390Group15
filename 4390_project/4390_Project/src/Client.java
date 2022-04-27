@@ -11,7 +11,7 @@ class Client {
 	Scanner sc = new Scanner(System.in);
 
 	try {
-	    Socket socket = start.accept();
+	    Socket socket = new Socket("127.0.0.1", port);
 
 	    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
