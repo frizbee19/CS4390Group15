@@ -4,12 +4,14 @@ import java.util.*;
 
 class project2 {
     public static void main(String[] args) throws UnknownHostException, IOException {
-	int port = 2300;
+	int port = 9876;
+	
+        ServerSocket start = new ServerSocket(port); 
 
 	Scanner sc = new Scanner(System.in);
 
 	try {
-	    Socket socket = new Socket("cs1.utdallas.edu", port);
+	    Socket socket = start.accept();
 
 	    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
