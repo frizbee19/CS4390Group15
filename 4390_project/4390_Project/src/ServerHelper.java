@@ -16,6 +16,7 @@ public class ServerHelper implements Runnable {
     String name;
     LocalDateTime startTime;
     LocalDateTime endTime;
+    BufferedReader inCalc;
     
 
     // constructor, takes a socket as a parameter from driver code
@@ -23,7 +24,7 @@ public class ServerHelper implements Runnable {
         connectionSocket = connSocket;
         this.logWriter = logWriter;
         inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream())); 
-
+        inCalc = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
         outToClient = new DataOutputStream(connectionSocket.getOutputStream()); 
     }
 
@@ -35,7 +36,7 @@ public class ServerHelper implements Runnable {
         // read the expression from the client
         try {
             // outToClient.writeBytes("Enter an expression (or enter nothing to quit): ");
-            expr = inFromClient.readLine();
+            expr = inCalc.readLine();
             logWriter.println(LocalDateTime.now() + " " + name + ": " + expr);
             
         } 
@@ -45,7 +46,7 @@ public class ServerHelper implements Runnable {
             
         }
         // calculate the expression, repeat until client quits
-        while(expr != null || expr != "" || expr != "quit") {
+        // while(expr != null || expr != "" || expr != "quit") {
             //dijkstra's two-stack algorithm
             String tokens[] = expr.split(" ");
             Stack<Integer> nums = new Stack<Integer>();
@@ -82,6 +83,7 @@ public class ServerHelper implements Runnable {
             result = nums.pop();
             try {
                 outToClient.writeBytes("The result is: " + result + '\n');
+                System.out.println("The result is: " + result);
                 logWriter.println(LocalDateTime.now() + " " + name + ": " + result);
                 
             } 
@@ -103,7 +105,7 @@ public class ServerHelper implements Runnable {
                     System.out.println("Error: " + e1.getMessage());
                 }
             }
-        }
+        // }
     }
 
     // helper method to calculate expression
